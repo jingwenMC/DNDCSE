@@ -1,0 +1,11 @@
+name: DNDC-ServerEdition
+version: ${project.version}
+main: cn.southplex.dndcse.main
+authors: [SouthPlex, jingwenMC]
+description: MCDNDC Server Edition
+website: south.jwmc.top
+commands:
+  dndcs:
+    aliases: [dndcse,dndc,dnd,byz]
+    description: Main Command Of DNDCSE
+    usage: /<command> help
