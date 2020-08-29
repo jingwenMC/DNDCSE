@@ -8,6 +8,7 @@ import cn.southplex.dndcse.managers.PlayerManager;
 import cn.southplex.dndcse.runnable.GameLoop;
 import cn.southplex.dndcse.runnable.GameLoopSec;
 import cn.southplex.dndcse.utils.GameState;
+import cn.southplex.dndcse.utils.WorldUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -23,6 +24,9 @@ public final class main extends JavaPlugin {
     private GameManager gameManager;
     private BungeeManager bungeeManager;
     private String WorldName = getConfig().getString("world");
+    private String WorldName2 = getConfig().getString("world_spawn");
+    private WorldUtil worldUtil;
+    private int rmb = 0;
     //public Location lobbyLocation = null;
     //public Location spawnLocation = null;
     private int ct=0;
@@ -35,6 +39,9 @@ public final class main extends JavaPlugin {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
         setCt(main.getPlugin(main.class).getConfig().getInt("wait_time"));
+        worldUtil = new WorldUtil();
+        worldUtil.loadWorld(WorldName);
+        worldUtil.loadWorld(WorldName2);
         Bukkit.getLogger().info(ChatColor.AQUA+"[DNDCSE]正在加载:指令...");
         getCommand("dndcse").setExecutor(new dndcse());
         Bukkit.getLogger().info(ChatColor.AQUA+"[DNDCSE]正在加载:管理器...");
@@ -42,8 +49,8 @@ public final class main extends JavaPlugin {
         gameManager = new GameManager();
         gameManager.setGameState(GameState.WAIT);
         bungeeManager = new BungeeManager();
-        //lobbyLocation= new Location(Bukkit.getWorld(WorldName),getConfig().getDouble("lobby.x"),getConfig().getDouble("lobby.y"),getConfig().getDouble("lobby.z"));
-        //spawnLocation = new Location(Bukkit.getWorld(WorldName),getConfig().getDouble("spawn.x"),getConfig().getDouble("spawn.y"),getConfig().getDouble("spawn.z"));
+        Bukkit.getWorld(main.getInstance().getWorldName2()).setGameRuleValue("doDaylightCycle", "false");
+        Bukkit.getWorld(main.getInstance().getWorldName()).setGameRuleValue("doDaylightCycle", "false");
         Bukkit.getLogger().info(ChatColor.AQUA+"[DNDCSE]正在加载:游戏循环...");
         BukkitTask bukkitTask = new GameLoop().runTaskTimer(this,0,2);
         BukkitTask bukkitTask2 = new GameLoopSec().runTaskTimer(this,0,20);
@@ -71,11 +78,15 @@ public final class main extends JavaPlugin {
         return bungeeManager;
     }
     public Location getSpawnLocation() {
-        return new Location(Bukkit.getWorld(WorldName),getConfig().getDouble("spawn.x"),getConfig().getDouble("spawn.y"),getConfig().getDouble("spawn.z"));
+        return new Location(Bukkit.getWorld(WorldName2),getConfig().getDouble("spawn.x"),getConfig().getDouble("spawn.y"),getConfig().getDouble("spawn.z"));
     }
     public Location getLobbyLocation() {
         return new Location(Bukkit.getWorld(WorldName),getConfig().getDouble("lobby.x"),getConfig().getDouble("lobby.y"),getConfig().getDouble("lobby.z"));
     }
+    public String getWorldName2() {
+        return WorldName2;
+    }
+
     public String getWorldName() {
         return WorldName;
     }
@@ -85,5 +96,16 @@ public final class main extends JavaPlugin {
     }
     public void setCt(int ct) {
         this.ct = ct;
+    }
+    public WorldUtil getWorldUtil() {
+        return worldUtil;
+    }
+
+    public int getRmb() {
+        return rmb;
+    }
+
+    public void setRmb(int rmb) {
+        this.rmb = rmb;
     }
 }

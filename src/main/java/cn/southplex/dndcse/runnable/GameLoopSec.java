@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public class GameLoopSec extends BukkitRunnable {
     NMSUtil nmsUtil = new NMSHandler();
@@ -40,18 +41,21 @@ public class GameLoopSec extends BukkitRunnable {
                 if (i == 0) {
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         p.setMaxHealth(6);
-                        Bukkit.getWorld(main.getInstance().getWorldName()).setGameRuleValue("naturalRegeneration", "false");
+                        Bukkit.getWorld(main.getInstance().getWorldName2()).setGameRuleValue("naturalRegeneration", "false");
                         p.setGameMode(GameMode.SURVIVAL);
                         p.teleport(main.getInstance().getSpawnLocation());
                         p.getInventory().clear();
                         p.sendMessage(ChatColor.GOLD + "[游戏]游戏开始!");
                         p.sendMessage(ChatColor.GOLD + "[游戏]Tip:做事需谨慎!");
+                        p.sendMessage(ChatColor.GOLD + "[游戏]Tip:输入/dndc q <玩家名>进行查询!(不能查自己)");
                         nmsUtil.sendTitle(p, 0, 60, 20, ChatColor.RED + "游戏开始!", "争取活到最后!");
                         GamePlayer gamePlayer = main.getInstance().getPlayerManager().getGamePlayer(p);
                         gamePlayer.setPlayerState(GPlayerState.ALIVE);
                         gamePlayer.newTask();
+                        main.getInstance().getGameManager().setGameState(GameState.GAMING);
                     }
                     main.getInstance().getGameManager().setGameState(GameState.GAMING);
+                    BukkitTask bukkitTaska = new NewTask().runTaskTimer(main.getInstance(),2400,2400);
                 }
                 i--;
                 main.getInstance().setCt(i);
@@ -66,7 +70,12 @@ public class GameLoopSec extends BukkitRunnable {
         if(main.getInstance().getGameManager().getGameState()==GameState.GAMING)
         for(Player p : Bukkit.getOnlinePlayers())
         {
+            if(main.getInstance().getGameManager().getGameState()==GameState.GAMING)
             main.getInstance().getPlayerManager().getGamePlayer(p).setIdle(main.getInstance().getPlayerManager().getGamePlayer(p).getIdle()-1);
+            if(main.getInstance().getPlayerManager().getGamePlayer(p).getPlayerState()==GPlayerState.DEATH)
+            {
+                main.getInstance().getPlayerManager().getGamePlayer(p).setIdle(30);
+            }
             if(main.getInstance().getPlayerManager().getGamePlayer(p).getIdle()<=0)
             {
                 p.sendMessage(ChatColor.AQUA+"[游戏]你因长时间未移动而失败任务!");

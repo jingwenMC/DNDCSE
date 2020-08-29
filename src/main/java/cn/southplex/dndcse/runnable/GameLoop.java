@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class GameLoop extends BukkitRunnable {
     NMSUtil nmsUtil = new NMSHandler();
+    static int sb = 0;
     @Override
     public void run() {
         for(Player p : Bukkit.getOnlinePlayers())
@@ -22,8 +23,6 @@ public class GameLoop extends BukkitRunnable {
                 p.setGameMode(GameMode.SPECTATOR);
             }
         }
-        //TODO:Listen
-        if(main.getInstance().getGameManager().getGameState()==null)main.getInstance().getGameManager().setGameState(GameState.WAIT);
         if(main.getInstance().getGameManager().getGameState() == GameState.GAMING && Bukkit.getOnlinePlayers().size()>0)
         {
             int i =0;
@@ -50,29 +49,36 @@ public class GameLoop extends BukkitRunnable {
                 }
                 Bukkit.broadcastMessage(ChatColor.GOLD+"==============================");
                 Bukkit.broadcastMessage(ChatColor.AQUA+"游戏结束!将在5秒后将你传送到大厅...");
-                BukkitTask task = new BukkitRunnable(){
-                    @Override
-                    public void run() {
-                        BungeeManager bungeeManager = new BungeeManager();
-                        for(Player p : Bukkit.getOnlinePlayers())
-                        {
-                            main.getInstance().getBungeeManager().quitSend(p);
+                try {
+                    BukkitTask task = new GameEnd().runTaskLater(main.getInstance(),100);
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                finally {
+                    BukkitTask task2 = new BukkitRunnable()
+                    {
+
+                        @Override
+                        public void run() {
+                            Bukkit.shutdown();
                         }
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        Bukkit.shutdown();
-                    }
-                }.runTaskLater(main.getInstance(),100);
+                    }.runTaskLater(main.getInstance(),105);
+
+                }
 
             }
-            for(Player p : Bukkit.getOnlinePlayers())
-            {
-                GamePlayer gp = main.getInstance().getPlayerManager().getGamePlayer(p);
-                ScoreboardUtil.updateOneScoreboard(gp,i);
-            }
+                if(sb==0) {
+                    sb=20;
+                    for(Player p : Bukkit.getOnlinePlayers()) {
+                        GamePlayer gp = main.getInstance().getPlayerManager().getGamePlayer(p);
+                        ScoreboardUtil.updateOneScoreboard(gp, i);
+                    }
+                }
+                sb--;
         }
+        Bukkit.getWorld(main.getInstance().getWorldName()).setTime(6000);
+        Bukkit.getWorld(main.getInstance().getWorldName2()).setTime(6000);
+        //doDaylightCycle
     }
 }

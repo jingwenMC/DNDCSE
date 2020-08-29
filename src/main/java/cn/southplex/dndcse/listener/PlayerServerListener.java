@@ -10,10 +10,7 @@ import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.*;
 
 public class PlayerServerListener implements Listener {
     @EventHandler
@@ -41,20 +38,23 @@ public class PlayerServerListener implements Listener {
         playerJoinEvent.getPlayer().setHealth(20);
         playerJoinEvent.getPlayer().getInventory().clear();
         playerJoinEvent.getPlayer().setFoodLevel(20);
+        GamePlayer gamePlayer = main.getInstance().getPlayerManager().createGamePlayer(playerJoinEvent.getPlayer());
         if(main.getInstance().getGameManager().getGameState()== GameState.GAMING)
         {
-            GamePlayer gamePlayer = main.getInstance().getPlayerManager().createGamePlayer(playerJoinEvent.getPlayer());
             gamePlayer.setPlayerState(GPlayerState.DEATH);
             playerJoinEvent.getPlayer().setGameMode(GameMode.SPECTATOR);
             playerJoinEvent.getPlayer().teleport(main.getInstance().getSpawnLocation());
             playerJoinEvent.getPlayer().sendMessage(ChatColor.YELLOW+"游戏已经开始,你正在以旁观者加入!");
+            playerJoinEvent.setJoinMessage("");
         }
         if(main.getInstance().getGameManager().getGameState()==GameState.WAIT||main.getInstance().getGameManager().getGameState()==GameState.READY)
         {
-            GamePlayer gamePlayer = main.getInstance().getPlayerManager().createGamePlayer(playerJoinEvent.getPlayer());
             gamePlayer.setPlayerState(GPlayerState.WAIT);
             playerJoinEvent.getPlayer().teleport(main.getInstance().getLobbyLocation());
+            playerJoinEvent.setJoinMessage(ChatColor.YELLOW+"[加入]"+playerJoinEvent.getPlayer().getName()+"加入了游戏"+ChatColor.AQUA+"("+Bukkit.getOnlinePlayers().size()+"/"+main.getPlugin(main.class).getConfig().getInt("max")+")");
         }
+        gamePlayer.showToAll();
+
     }
     @EventHandler
     public void onBreak(BlockBreakEvent blockBreakEvent)
@@ -70,5 +70,14 @@ public class PlayerServerListener implements Listener {
     public void onMove(PlayerMoveEvent playerMoveEvent)
     {
         main.getInstance().getPlayerManager().getGamePlayer(playerMoveEvent.getPlayer()).setIdle(60);
+    }
+    @EventHandler
+    public void onQuit(PlayerQuitEvent playerQuitEvent)
+    {
+        if(main.getInstance().getGameManager().getGameState()==GameState.WAIT||main.getInstance().getGameManager().getGameState()==GameState.READY)
+        playerQuitEvent.setQuitMessage(ChatColor.RED+"[离开]"+playerQuitEvent.getPlayer().getName()+"离开了游戏"+ChatColor.AQUA+"("+(main.getInstance().getPlayerManager().getPlayerSize()-1)+"/"+main.getPlugin(main.class).getConfig().getInt("max")+")");
+        else if(main.getInstance().getPlayerManager().getGamePlayer(playerQuitEvent.getPlayer()).getPlayerState()==GPlayerState.ALIVE)playerQuitEvent.setQuitMessage(ChatColor.RED+"[离开]"+playerQuitEvent.getPlayer().getName()+"离开了游戏"+ChatColor.AQUA);
+        else playerQuitEvent.setQuitMessage("");
+        main.getInstance().getPlayerManager().removeGamePlayer(playerQuitEvent.getPlayer().getName());
     }
 }

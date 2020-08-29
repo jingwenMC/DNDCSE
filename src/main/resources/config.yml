@@ -1,10 +1,14 @@
 #DNDCSE Config File
 #License: Private
 
+#服务器代码，仅对计分板有影响
+server: 'dn101a'
 #地图名称，仅对计分板有影响
-map: 'The Map'
-#游戏世界名称
+map: '地图'
+#大厅世界名称
 world: 'world'
+#游戏世界名称
+world_spawn: 'world'
 #最大人数
 max: 8
 #最小人数
@@ -18,6 +22,6 @@ lobby:
   z: 0
 #游戏开始时的位置
 spawn:
-  x: 0
-  y: 64
+  x: 064
+  y:
   z: 0

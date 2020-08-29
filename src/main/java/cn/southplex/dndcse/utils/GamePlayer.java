@@ -14,7 +14,7 @@ public class GamePlayer {
     private Topics topic;
     NMSUtil nmsUtil = new NMSHandler();
     private int idle = 60;
-    private static Random r = new Random(System.currentTimeMillis());
+    private Random r = new Random(System.currentTimeMillis());
     public GamePlayer(Player p){
         player = p;
     }
@@ -32,6 +32,7 @@ public class GamePlayer {
     public void failTask()
     {
         Boolean flag = false;
+        if(getPlayerState()==GPlayerState.DEATH)return;
         if(player.getHealth()>2.0) {
             player.setHealth(player.getHealth() - 2.0);
             nmsUtil.sendTitle(player, 0, 60, 0, ChatColor.RED + "任务失败", ChatColor.WHITE + "你的任务是: " + topic.getValue());
@@ -53,8 +54,10 @@ public class GamePlayer {
     public void newTask()
     {
         //r ;
+        r.setSeed(System.currentTimeMillis()+player.getEntityId()+main.getInstance().getRmb());
         int ran1 = r.nextInt(Topics.values().length);
-        Topics newValue = Topics.values()[ran1];
+        Topics newValue = Topics.values()[(int) ((ran1+System.currentTimeMillis()-114514+player.getEntityId()+main.getInstance().getRmb()-1919810)%Topics.values().length)];
+        main.getInstance().setRmb(main.getInstance().getRmb()+1);
         topic = newValue;
     }
 
@@ -63,7 +66,12 @@ public class GamePlayer {
         if(playerState2 == GPlayerState.WAIT)playerState=GPlayerState.WAIT;
         if(playerState2 == GPlayerState.DEATH)playerState=GPlayerState.DEATH;
     }
-
+    public void showToAll(){
+        for(Player p : Bukkit.getOnlinePlayers()){
+            p.hidePlayer(this.player);
+            p.showPlayer(this.player);
+        }
+    }
     public int getIdle() {
         return idle;
     }

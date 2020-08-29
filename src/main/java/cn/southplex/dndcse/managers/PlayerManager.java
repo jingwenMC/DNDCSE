@@ -2,7 +2,6 @@ package cn.southplex.dndcse.managers;
 
 import cn.southplex.dndcse.utils.GPlayerState;
 import cn.southplex.dndcse.utils.GamePlayer;
-import cn.southplex.dndcse.utils.Topics;
 import org.bukkit.entity.Player;
 import java.util.HashMap;
 
@@ -28,6 +27,10 @@ public class PlayerManager {
             return createGamePlayer(p);
         }
         return gp;
+    }
+    public int getPlayerSize()
+    {
+        return map.size();
     }
 }
 /*

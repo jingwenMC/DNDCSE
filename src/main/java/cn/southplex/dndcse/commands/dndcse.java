@@ -32,6 +32,17 @@ public class dndcse implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(args.length==0)return error(sender);
+        if(args[0].equalsIgnoreCase("q"))
+        {
+            Player target = Bukkit.getPlayerExact(args[1]);
+            if(args.length==2&&target!=null&&sender.getName()!=target.getName())
+            {
+                GamePlayer gp = main.getInstance().getPlayerManager().getGamePlayer(target);
+                sendmsg(sender, "被查询人的词语:"+gp.getTopic().getValue());
+                return true;
+            }
+            else return error(sender);
+        }
         if(args[0].equalsIgnoreCase("reset"))
         {
             if(args.length==2&&sender.isOp())
@@ -69,7 +80,11 @@ public class dndcse implements CommandExecutor {
                 sendmsg(sender,"/dndcs get <player> 获得一名玩家的词语");
                 return true;
             }
-            else return error(sender);
+            else {
+                sendmsg(sender,"指令帮助:");
+                sendmsg(sender,"/dndc q <player> 获得一名玩家的词语(不能是自己)");
+                return true;
+            }
         }
         return error(sender);
     }
