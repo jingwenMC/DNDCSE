@@ -14,8 +14,8 @@ DoNotDoChallenge - Server Edition
 
 ## 插件下载
 #### 稳定版下载方式
-1. 进入稳定版发布页https://github.com/SouthplexStudio/DNDCSE/releases  
-2. 下载`Latest release`中的第一个Jar文件(插件本体)  
+1. 进入稳定版发布页https://github.com/SouthplexStudio/DNDCSE/releases/latest  
+2. 下载`Assets`中的第一个Jar文件(插件本体)  
 3. 将下载的Jar文件复制到服务器的`/plugins`目录  
 4. 启动服务器，并进行配置
 #### 开发版下载方式(暂未开放)
