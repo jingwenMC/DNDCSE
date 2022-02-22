@@ -6,8 +6,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.Objects;
 
 public class GameLoopSec extends BukkitRunnable {
     NMSUtil nmsUtil = new NMSHandler();
@@ -22,7 +26,8 @@ public class GameLoopSec extends BukkitRunnable {
                 ScoreboardUtil.updateOneScoreboard(gp,0);
             }
             if (Bukkit.getOnlinePlayers().size() >= main.getPlugin(main.class).getConfig().getInt("min")) {
-                if (i == 60) Bukkit.broadcastMessage(ChatColor.AQUA + "[游戏]开始倒计时!");
+                if(i == main.getPlugin(main.class).getConfig().getInt("wait_time"))
+                    Bukkit.broadcastMessage(ChatColor.AQUA + "[游戏]开始倒计时!");
                 main.getInstance().getGameManager().setGameState(GameState.READY);
                 for (Player p : Bukkit.getOnlinePlayers()) p.setLevel(i);
                 if (i == 60) Bukkit.broadcastMessage(ChatColor.AQUA + "倒计时60秒!");
@@ -54,6 +59,9 @@ public class GameLoopSec extends BukkitRunnable {
                         gamePlayer.newTask();
                         main.getInstance().getGameManager().setGameState(GameState.GAMING);
                     }
+                    i=main.getPlugin(main.class).getConfig().getInt("game_time")+1;
+                    main.getInstance().setCt(main.getPlugin(main.class).getConfig().getInt("game_time")+1);
+                    main.getInstance().getGameManager().setRandomMission();
                     main.getInstance().getGameManager().setGameState(GameState.GAMING);
                     BukkitTask bukkitTaska = new NewTask().runTaskTimer(main.getInstance(),2400,2400);
                 }
@@ -67,20 +75,44 @@ public class GameLoopSec extends BukkitRunnable {
                 }
             }
         }
-        if(main.getInstance().getGameManager().getGameState()==GameState.GAMING)
-        for(Player p : Bukkit.getOnlinePlayers())
-        {
-            if(main.getInstance().getGameManager().getGameState()==GameState.GAMING)
-            main.getInstance().getPlayerManager().getGamePlayer(p).setIdle(main.getInstance().getPlayerManager().getGamePlayer(p).getIdle()-1);
-            if(main.getInstance().getPlayerManager().getGamePlayer(p).getPlayerState()==GPlayerState.DEATH)
-            {
-                main.getInstance().getPlayerManager().getGamePlayer(p).setIdle(30);
+        if(main.getInstance().getGameManager().getGameState()==GameState.GAMING) {
+            checkMission();
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (main.getInstance().getGameManager().getGameState() == GameState.GAMING)
+                    main.getInstance().getPlayerManager().getGamePlayer(p).setIdle(main.getInstance().getPlayerManager().getGamePlayer(p).getIdle() - 1);
+                if (main.getInstance().getPlayerManager().getGamePlayer(p).getPlayerState() == GPlayerState.DEATH) {
+                    main.getInstance().getPlayerManager().getGamePlayer(p).setIdle(30);
+                }
+                if (main.getInstance().getPlayerManager().getGamePlayer(p).getIdle() <= 0) {
+                    p.sendMessage(ChatColor.AQUA + "[游戏]你因长时间未移动而失败任务!");
+                    main.getInstance().getPlayerManager().getGamePlayer(p).failTask();
+                    main.getInstance().getPlayerManager().getGamePlayer(p).setIdle(30);
+                }
             }
-            if(main.getInstance().getPlayerManager().getGamePlayer(p).getIdle()<=0)
-            {
-                p.sendMessage(ChatColor.AQUA+"[游戏]你因长时间未移动而失败任务!");
-                main.getInstance().getPlayerManager().getGamePlayer(p).failTask();
-                main.getInstance().getPlayerManager().getGamePlayer(p).setIdle(30);
+            if(i>=0) {
+                i--;
+                main.getInstance().setCt(i);
+            }
+        }
+    }
+
+    private void checkMission() {
+        String winner = null;
+        boolean lock = false;
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            PlayerInventory inventory = p.getInventory();
+            if(inventory.contains(main.getInstance().getGameManager().getCurrentMission().getMaterial()))
+                winner = p.getName();
+        }
+        if(winner!=null && (!lock)) {
+            Bukkit.broadcastMessage(ChatColor.GOLD +"[游戏]恭喜玩家 "+winner+" 完成了游戏任务!游戏结束!");
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if(!Objects.equals(p.getName(), winner)) {
+                    GamePlayer gamePlayer = main.getInstance().getPlayerManager().getGamePlayer(p);
+                    gamePlayer.setPlayerState(GPlayerState.DEATH);
+                    p.getInventory().clear();
+                    p.setGameMode(GameMode.SPECTATOR);
+                }
             }
         }
     }

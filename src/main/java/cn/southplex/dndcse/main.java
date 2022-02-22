@@ -80,8 +80,8 @@ public final class main extends JavaPlugin {
     public Location getSpawnLocation() {
         return new Location(Bukkit.getWorld(WorldName2),getConfig().getDouble("spawn.x"),getConfig().getDouble("spawn.y"),getConfig().getDouble("spawn.z"));
     }
-    public Location getLobbyLocation() {
-        return new Location(Bukkit.getWorld(WorldName),getConfig().getDouble("lobby.x"),getConfig().getDouble("lobby.y"),getConfig().getDouble("lobby.z"));
+    public Location getLobbyLocation() {        return new Location(Bukkit.getWorld(WorldName),getConfig().getDouble("lobby.x"),getConfig().getDouble("lobby.y"),getConfig().getDouble("lobby.z"));
+
     }
     public String getWorldName2() {
         return WorldName2;

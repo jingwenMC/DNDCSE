@@ -10,6 +10,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class GameLoop extends BukkitRunnable {
     NMSUtil nmsUtil = new NMSHandler();
     static int sb = 0;
@@ -26,21 +30,21 @@ public class GameLoop extends BukkitRunnable {
         if(main.getInstance().getGameManager().getGameState() == GameState.GAMING && Bukkit.getOnlinePlayers().size()>0)
         {
             int i =0;
-            GamePlayer gamePlayer = null;
+            List<String> alive = new ArrayList<>();
             for(Player p : Bukkit.getOnlinePlayers())
             {
                 if(main.getInstance().getPlayerManager().getGamePlayer(p).getPlayerState()==GPlayerState.ALIVE)
                 {
                     i++;
-                    gamePlayer=main.getInstance().getPlayerManager().getGamePlayer(p);
+                    alive.add(main.getInstance().getPlayerManager().getGamePlayer(p).getPlayer().getName());
                 }
             }
-            if(i==1)
+            if(i==1 || main.getInstance().getCt()<=0)
             {
                 main.getInstance().getGameManager().setGameState(GameState.END);
                 Bukkit.broadcastMessage(ChatColor.RED+"游戏结束!");
                 Bukkit.broadcastMessage(ChatColor.GOLD+"==============================");
-                Bukkit.broadcastMessage("获胜者: "+ChatColor.GOLD+gamePlayer.getPlayer().getName());
+                Bukkit.broadcastMessage("获胜者: "+ChatColor.GOLD+ Arrays.toString(alive.toArray()));
                 for(Player p : Bukkit.getOnlinePlayers())
                 {
                     if(main.getInstance().getPlayerManager().getGamePlayer(p).getPlayerState()==GPlayerState.ALIVE)

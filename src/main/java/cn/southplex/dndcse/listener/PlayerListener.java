@@ -2,10 +2,7 @@ package cn.southplex.dndcse.listener;
 
 import cn.southplex.dndcse.utils.*;
 import cn.southplex.dndcse.main;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,6 +16,24 @@ import org.bukkit.event.player.*;
 
 public class PlayerListener implements Listener {
     NMSUtil nmsUtil = new NMSHandler();
+    @EventHandler
+    public void onMove(PlayerMoveEvent event) {
+        GamePlayer gamePlayer = main.getInstance().getPlayerManager().getGamePlayer(event.getPlayer());
+        if(event.getTo().getY()>=128.0) {
+            event.setCancelled(true);
+            Location location = event.getPlayer().getLocation();
+            location.setX(127.5);
+            event.getPlayer().teleport(location);
+            event.getPlayer().sendMessage(ChatColor.RED+"请不要到高于128格的位置！");
+        }
+        if(event.getTo().getY()<=32.0) {
+            event.setCancelled(true);
+            Location location = event.getPlayer().getLocation();
+            location.setY(32.5);
+            event.getPlayer().teleport(location);
+            event.getPlayer().sendMessage(ChatColor.RED+"请不要到低于32格的位置！");
+        }
+    }
     @EventHandler
     public void onDamage(EntityDamageEvent entityDamageEvent)
     {
@@ -82,15 +97,6 @@ public class PlayerListener implements Listener {
     {
         GamePlayer gamePlayer = main.getInstance().getPlayerManager().getGamePlayer((Player)craftItemEvent.getWhoClicked());
         if(craftItemEvent.getRecipe().getResult().getType()==Material.STICK && gamePlayer.getTopic()==Topics.CRAFT_STICK)
-        {
-            gamePlayer.failTask();
-        }
-    }
-    @EventHandler
-    public void onSwim(PlayerMoveEvent playerMoveEvent)
-    {
-        GamePlayer gamePlayer = main.getInstance().getPlayerManager().getGamePlayer(playerMoveEvent.getPlayer());
-        if((playerMoveEvent.getFrom().getBlock().getType()==Material.WATER||playerMoveEvent.getTo().getBlock().getType()==Material.WATER)&&gamePlayer.getTopic()==Topics.SWIM)
         {
             gamePlayer.failTask();
         }

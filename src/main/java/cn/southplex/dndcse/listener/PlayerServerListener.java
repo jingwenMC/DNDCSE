@@ -51,7 +51,7 @@ public class PlayerServerListener implements Listener {
         {
             gamePlayer.setPlayerState(GPlayerState.WAIT);
             playerJoinEvent.getPlayer().teleport(main.getInstance().getLobbyLocation());
-            playerJoinEvent.setJoinMessage(ChatColor.YELLOW+"[加入]"+playerJoinEvent.getPlayer().getName()+"加入了游戏"+ChatColor.AQUA+"("+Bukkit.getOnlinePlayers().size()+"/"+main.getPlugin(main.class).getConfig().getInt("max")+")");
+            playerJoinEvent.setJoinMessage(ChatColor.YELLOW+"[加入] "+playerJoinEvent.getPlayer().getName()+" 加入了游戏"+ChatColor.AQUA+"("+Bukkit.getOnlinePlayers().size()+"/"+main.getPlugin(main.class).getConfig().getInt("max")+")");
         }
         gamePlayer.showToAll();
 
@@ -75,8 +75,8 @@ public class PlayerServerListener implements Listener {
     public void onQuit(PlayerQuitEvent playerQuitEvent)
     {
         if(main.getInstance().getGameManager().getGameState()==GameState.WAIT||main.getInstance().getGameManager().getGameState()==GameState.READY)
-        playerQuitEvent.setQuitMessage(ChatColor.RED+"[离开]"+playerQuitEvent.getPlayer().getName()+"离开了游戏"+ChatColor.AQUA+"("+(main.getInstance().getPlayerManager().getPlayerSize()-1)+"/"+main.getPlugin(main.class).getConfig().getInt("max")+")");
-        else if(main.getInstance().getPlayerManager().getGamePlayer(playerQuitEvent.getPlayer()).getPlayerState()==GPlayerState.ALIVE)playerQuitEvent.setQuitMessage(ChatColor.RED+"[离开]"+playerQuitEvent.getPlayer().getName()+"离开了游戏"+ChatColor.AQUA);
+        playerQuitEvent.setQuitMessage(ChatColor.RED+"[离开] "+playerQuitEvent.getPlayer().getName()+" 离开了游戏"+ChatColor.AQUA+"("+(main.getInstance().getPlayerManager().getPlayerSize()-1)+"/"+main.getPlugin(main.class).getConfig().getInt("max")+")");
+        else if(main.getInstance().getPlayerManager().getGamePlayer(playerQuitEvent.getPlayer()).getPlayerState()==GPlayerState.ALIVE)playerQuitEvent.setQuitMessage(ChatColor.RED+"[离开] "+playerQuitEvent.getPlayer().getName()+" 离开了游戏"+ChatColor.AQUA);
         else playerQuitEvent.setQuitMessage("");
         main.getInstance().getPlayerManager().removeGamePlayer(playerQuitEvent.getPlayer().getName());
     }
