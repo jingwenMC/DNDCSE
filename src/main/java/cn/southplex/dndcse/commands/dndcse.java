@@ -1,14 +1,16 @@
 package cn.southplex.dndcse.commands;
 
-import cn.southplex.dndcse.main;
+import cn.southplex.dndcse.DNDCSE;
+import cn.southplex.dndcse.utils.GPlayerState;
 import cn.southplex.dndcse.utils.GamePlayer;
-import cn.southplex.dndcse.utils.Topics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 public class dndcse implements CommandExecutor {
     private void sendmsg(CommandSender sender,String str)
@@ -26,18 +28,28 @@ public class dndcse implements CommandExecutor {
     }
     private boolean error(CommandSender sender)
     {
-        sendmsg(sender,"输入的指令有误/权限不足");
+        sendmsg(sender,"输入的指令有误");
         return false;
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(args.length==0)return error(sender);
+
         if(args[0].equalsIgnoreCase("q"))
         {
+            if(args.length!=2) {
+                sendmsg(sender,"请使用/q <被查询玩家>查询另一名玩家的挑战");
+                return error(sender);
+            }
             Player target = Bukkit.getPlayerExact(args[1]);
-            if(args.length==2&&target!=null&&sender.getName()!=target.getName())
+
+            if(target != null && !Objects.equals(sender.getName(), target.getName()))
             {
-                GamePlayer gp = main.getInstance().getPlayerManager().getGamePlayer(target);
+                GamePlayer gp = DNDCSE.getInstance().getPlayerManager().getGamePlayer(target);
+                if(gp.getPlayerState().equals(GPlayerState.DEATH)) {
+                    sendmsg(sender,"不能查询旁观者!");
+                    return error(sender);
+                }
                 sendmsg(sender, "被查询人的词语:"+gp.getTopic().getValue());
                 return true;
             }
@@ -49,7 +61,7 @@ public class dndcse implements CommandExecutor {
             {
                 Player target = Bukkit.getPlayerExact(args[1]);
                 if(target != null) {
-                    main.getInstance().getPlayerManager().getGamePlayer(target).newTask();
+                    DNDCSE.getInstance().getPlayerManager().getGamePlayer(target).newTask();
                     sendmsg(sender, "已成功重置");
                     return true;
                 }
@@ -62,7 +74,7 @@ public class dndcse implements CommandExecutor {
             if(args.length==2&&sender.isOp())
             {
                 Player target = Bukkit.getPlayerExact(args[1]);
-                GamePlayer gp = main.getInstance().getPlayerManager().getGamePlayer(target);
+                GamePlayer gp = DNDCSE.getInstance().getPlayerManager().getGamePlayer(target);
                 if(target != null) {
                     sendmsg(sender, "词语:"+gp.getTopic().getValue());
                     return true;
@@ -83,6 +95,7 @@ public class dndcse implements CommandExecutor {
             else {
                 sendmsg(sender,"指令帮助:");
                 sendmsg(sender,"/dndc q <player> 获得一名玩家的词语(不能是自己)");
+                sendmsg(sender,"/q <player> 获得一名玩家的词语(不能是自己), /dndc q指令的简写");
                 return true;
             }
         }

@@ -1,6 +1,6 @@
 package cn.southplex.dndcse.runnable;
 
-import cn.southplex.dndcse.main;
+import cn.southplex.dndcse.DNDCSE;
 import cn.southplex.dndcse.utils.GPlayerState;
 import cn.southplex.dndcse.utils.GamePlayer;
 import org.bukkit.Bukkit;
@@ -13,13 +13,13 @@ public class NewTask extends BukkitRunnable {
     public void run() {
         for(Player p : Bukkit.getOnlinePlayers())
         {
-            GamePlayer gamePlayer = main.getInstance().getPlayerManager().getGamePlayer(p);
+            GamePlayer gamePlayer = DNDCSE.getInstance().getPlayerManager().getGamePlayer(p);
             if(gamePlayer.getPlayerState()== GPlayerState.DEATH)continue;
             else
             {
                 gamePlayer.newTask();
             }
         }
-        Bukkit.broadcastMessage(ChatColor.AQUA+"[游戏]任务已重置");
+        Bukkit.broadcastMessage(ChatColor.AQUA+"[游戏]挑战已重置");
     }
 }
