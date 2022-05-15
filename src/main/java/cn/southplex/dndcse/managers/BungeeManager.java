@@ -12,11 +12,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 
 public class BungeeManager implements Listener {
-    public void quitSend(Player p){
+    public void quitSend(Player p,String dest){
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Connect");
-        out.writeUTF("ptlobby-1");
-
+        out.writeUTF(dest);
         p.sendPluginMessage(DNDCSE.getInstance(), "BungeeCord", out.toByteArray());
     }
 

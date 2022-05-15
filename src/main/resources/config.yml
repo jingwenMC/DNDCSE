@@ -27,3 +27,6 @@ spawn:
   x: 0
   y: 64
   z: 0
+#大厅
+lobbies:
+  - 'P-LB-1'
