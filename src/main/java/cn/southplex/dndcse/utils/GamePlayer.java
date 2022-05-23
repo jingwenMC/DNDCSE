@@ -48,6 +48,7 @@ public class GamePlayer {
             GamePlayer gamePlayer = DNDCSE.getInstance().getPlayerManager().getGamePlayer(player);
             gamePlayer.setPlayerState(GPlayerState.DEATH);
             for(ItemStack i : player.getInventory().getContents()) {
+                if(i!=null)
                 Bukkit.getWorld(DNDCSE.getInstance().getWorldName2()).dropItem(player.getLocation(),i);
             }
             player.getInventory().clear();
