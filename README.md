@@ -1,7 +1,7 @@
 # DNDCSE
 DoNotDoChallenge - Server Edition  
 ## 状态提示  
-本插件已经基本停止活跃更新，由于该项目被原使用的服务器放弃，故开源供公众使用  
+本插件已经基本停止活跃更新，现开源供公众使用  
   
 当前版本:  
 稳定版:v0.1.0(Pre-Release)    |   开发版:v0.1.0(Pre-Release)  
