@@ -1,5 +1,7 @@
 # DNDCSE
 DoNotDoChallenge - Server Edition  
+## 状态提示  
+本插件已经基本停止活跃更新，由于该项目被原使用的服务器放弃，故开源供公众使用  
   
 当前版本:  
 稳定版:v0.1.0(Pre-Release)    |   开发版:v0.1.0(Pre-Release)  
@@ -14,12 +16,12 @@ DoNotDoChallenge - Server Edition
 
 ## 插件下载
 #### 稳定版下载方式
-1. 进入稳定版发布页https://github.com/AriaCraftMC/DNDCSE/releases/latest  
+1. 进入稳定版发布页https://github.com/jingwenMC/DNDCSE/releases/latest  
 2. 下载`Assets`中的第一个Jar文件(插件本体)  
 3. 将下载的Jar文件复制到服务器的`/plugins`目录  
 4. 启动服务器，并进行配置
 #### 开发版下载方式(暂未开放)
-1. 进入开发版CI https://github.com/AriaCraftMC/DNDCSE/actions
+1. 进入开发版CI https://github.com/jingwenMC/DNDCSE/actions
 2. 在`All workflows`中点击最新的一次构建
 3. 在`Artifacts`中下载zip文件`Jar_Snapshot_Build`(可能需要登录GitHub才能下载)
 4. 提取其中的Jar文件
